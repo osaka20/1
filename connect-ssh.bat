@@ -1,8 +1,17 @@
 @echo off
-echo Configuration SSH en cours...
+:: Vérifier si le script est lancé en admin
+net session >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [*] Le script n'est pas en mode administrateur.
+    echo [*] Relance automatique en mode admin...
+    powershell -Command "Start-Process '%~f0' -Verb RunAs"
+    exit /b
+)
+
+echo [*] Script lancé en mode administrateur.
 echo.
 
-REM ===== Lancer PowerShell en mode administrateur =====
+:: Lancer PowerShell pour configurer SSH
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
  "Write-Host 'Installation du serveur SSH...'; ^
   Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0 -ErrorAction SilentlyContinue | Out-Null; ^
